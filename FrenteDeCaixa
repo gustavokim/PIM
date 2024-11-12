@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define MAX_FRUITS 15
+#define MAX_CODE_LENGTH 5
+
+// Estrutura para armazenar dados da fruta
+typedef struct {
+    char nome[50];
+    float preco;
+    int codigo;
+} Fruta;
+
+// Estrutura para armazenar dados da venda
+typedef struct {
+    int numeroNF;
+    Fruta fruta;
+    int quantidade;
+    float valorTotal;
+} Venda;
+
+// Função para gerar um número de venda aleatório
+int gerarNumeroNF() {
+    srand(time(NULL));
+    return rand() % 10000; // Gera um número aleatório de 4 dígitos
+}
+
+// Função para visualizar os itens cadastrados
+void visualizarItens(Fruta frutas[], int numFrutas) {
+    printf("\nFrutas Cadastradas:\n");
+    printf("-------------------------------------\n");
+    printf("Codigo | Nome              | Precco\n");
+    printf("-------------------------------------\n");
+    for (int i = 0; i < numFrutas; i++) {
+        printf("%-6d | %-15s | R$ %.2f\n", frutas[i].codigo, frutas[i].nome, frutas[i].preco);
+    }
+    printf("-------------------------------------\n");
+}
+
+// Função para consultar o preço de uma fruta
+void consultarPreco(Fruta frutas[], int numFrutas) {
+    int codigo;
+    printf("\nDigite o codigo da fruta: ");
+    scanf("%d", &codigo);
+
+    for (int i = 0; i < numFrutas; i++) {
+        if (frutas[i].codigo == codigo) {
+            printf("\nNome: %s\n", frutas[i].nome);
+            printf("Codigo: %d\n", frutas[i].codigo);
+            printf("Preccco: R$ %.2f\n", frutas[i].preco);
+            return;
+        }
+    }
+    printf("\nFruta nao encontrada.\n");
+}
+
+// Função para calcular o valor parcial da venda
+float calcularValorParcial(Fruta fruta, int quantidade, char tipo) {
+    if (tipo == 'u') {
+        return quantidade * fruta.preco;
+    } else if (tipo == 'p') {
+        return quantidade * fruta.preco; // Assumindo que 'quantidade' é o peso
+    } else {
+        printf("\nTipo de quantidade inválido.\n");
+        return 0;
+    }
+}
+
+// Função para efetuar a venda
+void efetuarVenda(Fruta frutas[], int numFrutas) {
+    int codigo, quantidade;
+    char tipo;
+    float valorTotal = 0;
+
+    printf("\nDigite o codigo da fruta: ");
+    scanf("%d", &codigo);
+
+    for (int i = 0; i < numFrutas; i++) {
+        if (frutas[i].codigo == codigo) {
+            printf("\nQuantidade (u/p): ");
+            scanf(" %c", &tipo);
+            printf("Quantidade: ");
+            scanf("%d", &quantidade);
+            valorTotal = calcularValorParcial(frutas[i], quantidade, tipo);
+            break;
+        }
+    }
+
+    if (valorTotal == 0) {
+        printf("\nFruta não encontrada.\n");
+        return;
+    }
+
+    // Gerar número da NF
+    int numeroNF = gerarNumeroNF();
+
+    // Confirmar recebimento do pagamento
+    char confirmacao;
+    printf("\nConfirma o recebimento do pagamento? (s/n): ");
+    scanf(" %c", &confirmacao);
+
+    if (confirmacao == 's') {
+        // Inserir os dados da venda no arquivo
+        FILE *arquivoVendas = fopen("vendas.txt", "a");
+        if (arquivoVendas == NULL) {
+            printf("\nErro ao abrir o arquivo de vendas.\n");
+            return;
+        }
+
+        Venda venda;
+        venda.numeroNF = numeroNF;
+        venda.fruta = frutas[codigo];
+        venda.quantidade = quantidade;
+        venda.valorTotal = valorTotal;
+
+        fprintf(arquivoVendas, "NF: %d, Fruta: %s, Quantidade: %d, Valor: %.2f\n",
+                venda.numeroNF, venda.fruta.nome, venda.quantidade, venda.valorTotal);
+
+        fclose(arquivoVendas);
+        printf("\nVenda registrada com sucesso!\n");
+    } else {
+        printf("\nVenda cancelada.\n");
+    }
+}
+
+int main() {
+    Fruta frutas[MAX_FRUITS];
+    int numFrutas = 0;
+
+    // Cadastrar frutas (exemplo)
+    strcpy(frutas[numFrutas].nome, "Maca");
+    frutas[numFrutas].preco = 2.50;
+    frutas[numFrutas].codigo = 1001;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Banana");
+    frutas[numFrutas].preco = 1.80;
+    frutas[numFrutas].codigo = 1002;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Laranja");
+    frutas[numFrutas].preco = 3.00;
+    frutas[numFrutas].codigo = 1003;
+    numFrutas++;
+
+    // Adicionando mais 8 frutas:
+    strcpy(frutas[numFrutas].nome, "Uva");
+    frutas[numFrutas].preco = 4.50;
+    frutas[numFrutas].codigo = 1004;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Pera");
+    frutas[numFrutas].preco = 3.20;
+    frutas[numFrutas].codigo = 1005;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Melancia");
+    frutas[numFrutas].preco = 8.00;
+    frutas[numFrutas].codigo = 1006;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Abacaxi");
+    frutas[numFrutas].preco = 5.50;
+    frutas[numFrutas].codigo = 1007;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Morango");
+    frutas[numFrutas].preco = 7.00;
+    frutas[numFrutas].codigo = 1008;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Manga");
+    frutas[numFrutas].preco = 4.00;
+    frutas[numFrutas].codigo = 1009;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Pessego");
+    frutas[numFrutas].preco = 6.00;
+    frutas[numFrutas].codigo = 1010;
+    numFrutas++;
+
+    strcpy(frutas[numFrutas].nome, "Limao");
+    frutas[numFrutas].preco = 1.50;
+    frutas[numFrutas].codigo = 1011;
+    numFrutas++;
+
+    // Menu principal
+    int opcao;
+    do {
+        printf("\n--- Sistema de Venda de Frutas ---\n");
+        printf("[1] Visualizar Itens\n");
+        printf("[2] Consultar Preccco\n");
+        printf("[3] Efetuar Venda\n");
+        printf("[0] Sair\n");
+        printf("--------------------------------\n");
+        printf("Digite a opcao desejada: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                visualizarItens(frutas, numFrutas);
+                break;
+            case 2:
+                consultarPreco(frutas, numFrutas);
+                break;
+            case 3:
+                efetuarVenda(frutas, numFrutas);
+                break;
+            case 0:
+                printf("\nSaindo do sistema...\n");
+                break;
+            default:
+                printf("\nOpcoo invalida!\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
