@@ -16,3 +16,8 @@ OBJETIVOS ESPECÍFICOS
 •	Desenvolver a capacidade de identificar as necessidades do usuário e traduzi-las em soluções de negócios;
 •	Argumentar e discutir as tecnologias utilizadas nos projetos de sistemas computacionais; e
 •	Fomentar o hábito de trabalho em equipe e execução de projetos envolvendo múltiplas disciplinas.
+
+ COMO UTILIZAR 
+• Compilação: Compile o código com um compilador C com GCC ou MinGW.
+• Execução: Clique no ícone indicado para executar o programa.
+• O menu principal será exibido.
